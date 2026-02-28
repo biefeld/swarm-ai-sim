@@ -45,7 +45,5 @@ function love.draw()
     enemy:draw()
     wall:draw()
 
-  
-
     camera:detach()
 end

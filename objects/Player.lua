@@ -9,6 +9,9 @@ function Player:init()
     self.velocity = 500
     self.sprint_modifier = 2
 
+    self.sprite = love.graphics.newImage("assets/player.png")
+    self.sprite_direction = 1
+
     -- setup body data (mass, location, dynamics); setup shape and fix to body
     self.body = love.physics.newBody(world, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2, "dynamic")
     self.body:setFixedRotation(true)
@@ -23,8 +26,10 @@ end
 
 
 function Player:draw()
-    love.graphics.setColor(0.2,0.5,0.1)
-    love.graphics.circle("line", self.body:getX(),self.body:getY(), self.shape:getRadius()) -- if we want to have a sprite, dont draw this. draw the sprite instead, should be linked to the coordinates of the body too.
+    -- love.graphics.setColor(0.2,0.5,0.1)
+    -- love.graphics.circle("line", self.body:getX(),self.body:getY(), self.shape:getRadius()) -- if we want to have a sprite, dont draw this. draw the sprite instead, should be linked to the coordinates of the body too.
+    love.graphics.setColor(1,1,1)
+    love.graphics.draw(self.sprite,self.body:getX()-25*self.sprite_direction, self.body:getY()-25, 0, 0.15*self.sprite_direction, 0.15)
 end
 
 function Player:get_velocity()
@@ -51,6 +56,12 @@ function Player:move()
     end
     if love.keyboard.isDown("w") then
         self.dy = self.dy - self:get_velocity()
+    end
+
+    if self.dx > 0 then
+        self.sprite_direction = 1
+    elseif self.dx < 0 then
+        self.sprite_direction = -1
     end
 
     self.body:setLinearVelocity(self.dx, self.dy)
