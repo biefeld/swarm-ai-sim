@@ -8,7 +8,6 @@ function Wall:init(_x, _y, _width, _height, _angle, _mass)
     self.shape = love.physics.newRectangleShape(_x, _y, _width, _height, _angle)
     self.fixture = love.physics.newFixture(self.body, self.shape)
     self.fixture:setUserData("Wall")
-    self.body:setAngularDamping(math.huge)
 end
 
 

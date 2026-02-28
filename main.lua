@@ -7,15 +7,15 @@ local Camera = require "lib.camera"
 
 world = nil
 
-function event_check()
-    if love.keyboard.isDown("r") then
+function love.keypressed(key, scancode, isrepeat)
+   if key == "r" then
         love.load()
-    end
-
-    if love.keyboard.isDown("q") then
+   end
+   if key == "q" then
         love.event.quit() 
     end
 end
+
 
 function love.load()
     world = love.physics.newWorld(0, 0, true)
@@ -31,7 +31,6 @@ end
 function love.update(dt)
     world:update(dt)
 
-    event_check()
     player:move() -- if the method has "self" as a parameter, must use colon
         
     camera:lockPosition(player.body:getX(), player.body:getY())

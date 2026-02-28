@@ -11,16 +11,20 @@ function Player:init()
 
     -- setup body data (mass, location, dynamics); setup shape and fix to body
     self.body = love.physics.newBody(world, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2, "dynamic")
-    self.body:setMass(MASS)
+    self.body:setFixedRotation(true)
+
     self.shape = love.physics.newCircleShape(25)
+
     self.fixture = love.physics.newFixture(self.body, self.shape)
     self.fixture:setUserData("Player")
+
+    self.body:setMass(MASS) -- must do after all fixtures are attached
 end
 
 
 function Player:draw()
     love.graphics.setColor(0.2,0.5,0.1)
-    love.graphics.circle("line", self.body:getX(),self.body:getY(), self.shape:getRadius())
+    love.graphics.circle("line", self.body:getX(),self.body:getY(), self.shape:getRadius()) -- if we want to have a sprite, dont draw this. draw the sprite instead, should be linked to the coordinates of the body too.
 end
 
 function Player:get_velocity()

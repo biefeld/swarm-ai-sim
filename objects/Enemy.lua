@@ -34,7 +34,6 @@ function Enemy:move(dt)
         self.cycle = self.cycle % #self.moving + 1
         self.timer = 0
     end
-    print(self.cycle)
 
     self.dx = self.dx + self.velocity*self.moving[self.cycle][1]
     self.dy = self.dy + self.velocity*self.moving[self.cycle][2]
