@@ -11,7 +11,7 @@ function Player:init()
 
     -- setup body data (mass, location, dynamics); setup shape and fix to body
     self.body = love.physics.newBody(world, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2, "dynamic")
-    self.body:setMass(self.mass)
+    self.body:setMass(MASS)
     self.shape = love.physics.newCircleShape(25)
     self.fixture = love.physics.newFixture(self.body, self.shape)
     self.fixture:setUserData("Player")
