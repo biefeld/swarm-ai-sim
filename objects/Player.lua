@@ -1,62 +1,55 @@
-function Player()
-    local MOVE_SPEED = 500
-    local SPRINT_MODIFIER = 2
+local Class = require "lib.30log"
 
-    return {
-        body, --metadata about the Player (that its dynamic, position, velocity etc)
-        shape, --the actual shape which can collide with things
-        fixture, --links the two above together
+Player = Class("Player")
 
-        x = love.graphics.getWidth() / 2,
-        y = love.graphics.getHeight() / 2,
-        radius = 25,
-        mass = -1,
-        sprinting = false,
+local MASS = 100
 
-        init = function(self)
-            self.body = love.physics.newBody(world, self.x,self.y, "static")
-            self.body:setMass(self.mass)
-            self.shape = love.physics.newCircleShape(self.radius)
-            self.fixture = love.physics.newFixture(self.body, self.shape)
-            self.fixture:setUserData("Player")
-        end,
+function Player:init()
+    self.sprinting = false
+    self.velocity = 500
+    self.sprint_modifier = 2
 
-        draw = function(self)
-            love.graphics.setColor(0.2,0.5,0.1)
-            love.graphics.circle("line", self.body:getX(),self.body:getY(), self.shape:getRadius(), 20)
-        end,
+    -- setup body data (mass, location, dynamics); setup shape and fix to body
+    self.body = love.physics.newBody(world, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2, "dynamic")
+    self.body:setMass(self.mass)
+    self.shape = love.physics.newCircleShape(25)
+    self.fixture = love.physics.newFixture(self.body, self.shape)
+    self.fixture:setUserData("Player")
+end
 
-        move = function(self)
-            self.dx, self.dy = 0, 0
 
-            if love.keyboard.isDown("lshift") then
-                self.sprinting = true
-            else
-                self.sprinting = false
-            end
+function Player:draw()
+    love.graphics.setColor(0.2,0.5,0.1)
+    love.graphics.circle("line", self.body:getX(),self.body:getY(), self.shape:getRadius())
+end
 
-            if love.keyboard.isDown("a") then
-                self.dx = self.dx - MOVE_SPEED
-            end
-            if love.keyboard.isDown("d") then
-                self.dx = self.dx + MOVE_SPEED
-            end
-            if love.keyboard.isDown("s") then
-                self.dy = self.dy + MOVE_SPEED
-            end
-            if love.keyboard.isDown("w") then
-                self.dy = self.dy - MOVE_SPEED
-            end
-        end,
+function Player:get_velocity()
+    if self.sprinting then
+        return self.velocity*self.sprint_modifier
+    end
+    return self.velocity
+end
 
-        get_v = function(self)
-            if self.sprinting then
-                return MOVE_SPEED*SPRINT_MODIFIER
-            end
-            return MOVE_SPEED
-        end
 
-    }
+function Player:move()
+    self.dx, self.dy = 0, 0
+
+    self.sprinting = love.keyboard.isDown("lshift")
+
+    if love.keyboard.isDown("a") then
+        self.dx = self.dx - self:get_velocity()
+    end
+    if love.keyboard.isDown("d") then
+        self.dx = self.dx + self:get_velocity()
+    end
+    if love.keyboard.isDown("s") then
+        self.dy = self.dy + self:get_velocity()
+    end
+    if love.keyboard.isDown("w") then
+        self.dy = self.dy - self:get_velocity()
+    end
+
+    self.body:setLinearVelocity(self.dx, self.dy)
 end
 
 return Player

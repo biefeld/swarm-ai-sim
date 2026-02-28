@@ -1,45 +1,47 @@
-function Enemy()
-    local HEIGHT = 30
-    local WIDTH = 30
-    local MOVE_SPEED = 2
-    local CYCLE_TIME = 2
+local Class = require "lib.30log"
 
-    return {
-        x = love.graphics.getWidth() - 400, --start middle of screenish
-        y = love.graphics.getHeight() - 300,
-        timer = 0,
-        moving_right = 1,
+Enemy = Class("Enemy")
 
+local CYCLE_TIME = 2
 
-        draw = function(self) -- passing in self means we can access any vars/methods in the table
-            love.graphics.setColor(1,0.1,0.1)
-            love.graphics.rectangle("fill", self.x, self.y, HEIGHT, WIDTH)
-        end,
+function Enemy:init(_x, _y, _width, _height, _angle, _mass, _name)
+    self.body = love.physics.newBody(world, _x , _y, "dynamic")
+    self.body:setFixedRotation(true) --body cannot rotate?
+    self.body:setMass(_mass)
+    self.shape = love.physics.newRectangleShape(_x, _y, _width, _height, _angle)
+    self.fixture = love.physics.newFixture(self.body, self.shape)
+    self.fixture:setUserData(_name)
 
-        move = function(self,dt,dx,dy,v)
-            if dx < 0 then
-                self.x = self.x - v
-            end
-            if dx > 0 then
-                self.x = self.x + v
-            end
-            if dy > 0 then
-                self.y = self.y + v
-            end
-            if dy < 0 then
-                self.y = self.y - v
-            end
-
-            if self.timer < CYCLE_TIME then
-                self.x = self.x + MOVE_SPEED*self.moving_right
-            else
-                self.timer = 0
-                self.moving_right = self.moving_right * -1
-            end
-
-            self.timer = self.timer + dt
-        end
+    self.velocity = 300
+    self.moving = {
+        {1, 0},
+        {-1, 0}
     }
+    self.timer = 0
+    self.cycle = 1
+end
+
+function Enemy:draw()
+    love.graphics.setColor(1,0.1,0.1)
+    love.graphics.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
+end
+
+
+function Enemy:move(dt)
+    self.dx, self.dy = 0, 0
+
+    if self.timer >= CYCLE_TIME then
+        self.cycle = self.cycle % #self.moving + 1
+        self.timer = 0
+    end
+    print(self.cycle)
+
+    self.dx = self.dx + self.velocity*self.moving[self.cycle][1]
+    self.dy = self.dy + self.velocity*self.moving[self.cycle][2]
+
+    self.body:setLinearVelocity(self.dx, self.dy)
+
+    self.timer = self.timer + dt
 end
 
 return Enemy
