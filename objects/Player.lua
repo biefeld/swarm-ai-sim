@@ -1,23 +1,29 @@
-
--- acts as an object
--- return a table which contains public methods and attr 
--- any local ones count as private
 function Player()
-    local MOVE_SPEED = 5
+    local MOVE_SPEED = 500
     local SPRINT_MODIFIER = 2
 
     return {
-        x = love.graphics.getWidth() / 2, --start middle of screenish, dont change this but move the rest of the entities
+        body, --metadata about the Player (that its dynamic, position, velocity etc)
+        shape, --the actual shape which can collide with things
+        fixture, --links the two above together
+
+        x = love.graphics.getWidth() / 2,
         y = love.graphics.getHeight() / 2,
-        width = 50,
-        height = 50,
-        dx = 0,
-        dy = 0,
+        radius = 25,
+        mass = -1,
         sprinting = false,
 
-        draw = function(self) -- passing in self means we can access any vars/methods in the table
+        init = function(self)
+            self.body = love.physics.newBody(world, self.x,self.y, "static")
+            self.body:setMass(self.mass)
+            self.shape = love.physics.newCircleShape(self.radius)
+            self.fixture = love.physics.newFixture(self.body, self.shape)
+            self.fixture:setUserData("Player")
+        end,
+
+        draw = function(self)
             love.graphics.setColor(0.2,0.5,0.1)
-            love.graphics.rectangle("line", self.x, self.y, self.width, self.height)
+            love.graphics.circle("line", self.body:getX(),self.body:getY(), self.shape:getRadius(), 20)
         end,
 
         move = function(self)
@@ -53,5 +59,4 @@ function Player()
     }
 end
 
--- Must have this here
 return Player
