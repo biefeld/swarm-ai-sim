@@ -5,13 +5,17 @@ Player = Class("Player")
 local MASS = 100
 
 function Player:init()
+    -- Drawing fields
+    self.sprite = love.graphics.newImage("assets/player.png")
+    self.sprite_direction = 1
+
+    -- Moving fields
     self.sprinting = false
     self.velocity = 500
     self.sprint_modifier = 2
 
-    self.sprite = love.graphics.newImage("assets/player.png")
-    self.sprite_direction = 1
 
+    -- Physics fields
     -- setup body data (mass, location, dynamics); setup shape and fix to body
     self.body = love.physics.newBody(world, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2, "dynamic")
     self.body:setFixedRotation(true)
@@ -45,16 +49,16 @@ function Player:move()
 
     self.sprinting = love.keyboard.isDown("lshift")
 
-    if love.keyboard.isDown("a") then
+    if love.keyboard.isDown(Input.LEFT) then
         self.dx = self.dx - self:get_velocity()
     end
-    if love.keyboard.isDown("d") then
+    if love.keyboard.isDown(Input.RIGHT) then
         self.dx = self.dx + self:get_velocity()
     end
-    if love.keyboard.isDown("s") then
+    if love.keyboard.isDown(Input.DOWN) then
         self.dy = self.dy + self:get_velocity()
     end
-    if love.keyboard.isDown("w") then
+    if love.keyboard.isDown(Input.UP) then
         self.dy = self.dy - self:get_velocity()
     end
 
