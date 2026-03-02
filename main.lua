@@ -20,25 +20,32 @@ function love.keypressed(key, scancode, isrepeat)
    if key == "q" then
         love.event.quit() 
     end
+    if key == "p" then
+        paused = not paused
+    end
 end
 
 function love.load()
     world = love.physics.newWorld(0, 0, true)
+    world:setCallbacks(begin_contact, end_contact, _, _)
+    paused = false
+    debug_text = ""
+
     camera = Camera()
 
     player = Player()
-
     background = Background()
     swarm = Swarm({
         {400, 700, 0, 50, 300, 2, "SwarmEnemy1", {1,0.5,0.5}, "salmon.png"},
         {600, 700, 0, 50, 100, 1, "SwarmEnemy2", {0.5,1,0.5}, "salmon.png"},
         {300, 700, 0, 50, 400, 2.5, "SwarmEnemy3", {0.5,0.5,1}, "salmon.png"}
     })
-
     wall = Wall(200, 200, 30, 100, 0, 100)
 end
 
 function love.update(dt)
+    if paused then return end
+
     world:update(dt)
 
     player:move() -- if the method has "self" as a parameter, must use colon
@@ -59,5 +66,34 @@ function love.draw()
     wall:draw()
     swarm:draw()
 
+    love.graphics.print(debug_text, 0, 0, 0, 2, 2)
+
     camera:detach()
+end
+
+
+function is_damaging(id_a, id_b)
+    return (id_a:find("^Player") ~= nil and id_b:find("^SwarmEnemy") ~= nil) or
+           (id_b:find("^Player") ~= nil and id_a:find("^SwarmEnemy") ~= nil)
+end
+
+function begin_contact(a, b, coll)
+    local id_a = a:getUserData()
+	local id_b = b:getUserData()
+    debug_text = debug_text..id_a.." colliding with "..id_b.."\n"
+    if is_damaging(id_a, id_b) then
+        player:take_damage()
+        debug_text = debug_text.."Damage interaction\n"
+    end
+
+    if player.health <= 0 then
+        debug_text = debug_text.."player dead\n"
+        paused = true
+    end
+end
+
+function end_contact(a, b, coll)
+	local id_a = a:getUserData()
+	local id_b = b:getUserData()
+    debug_text = debug_text..id_a.." uncolliding with "..id_b.."\n"
 end

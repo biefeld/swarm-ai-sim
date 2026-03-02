@@ -5,6 +5,9 @@ Player = Class("Player")
 local MASS = 100
 
 function Player:init()
+    -- Misc fields
+    self.health = 100.0
+    
     -- Drawing fields
     self.sprite = love.graphics.newImage("assets/player.png")
     self.sprite_direction = 1
@@ -69,6 +72,11 @@ function Player:move()
     end
 
     self.body:setLinearVelocity(self.dx, self.dy)
+end
+
+
+function Player:take_damage()
+    self.health = self.health - 10
 end
 
 return Player
