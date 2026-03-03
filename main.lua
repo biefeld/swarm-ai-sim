@@ -5,6 +5,7 @@ local Swarm = require "objects.Swarm"
 local Wall = require "objects.Wall"
 
 local Camera = require "lib.camera"
+local json = require "lib.json"
 
 local Category = require "enum.category"
 local Input = require "enum.input"
@@ -13,6 +14,8 @@ local Input = require "enum.input"
 world = nil
 camera = nil
 math.randomseed(os.time())
+
+swarm_points = json.decode(io.open("db/swarm_points.json", "r"):read("*all"))
 
 function love.keypressed(key, scancode, isrepeat)
    if key == "r" then
@@ -42,8 +45,9 @@ function love.load()
         {400, 700, 50, 200, "SwarmEnemySalmon3", {0.5,0.5,1}, "salmon.png"}
     })
 
-    random_swarm_data = Swarm:generate(4, {500,500}, 50, 50, 100, "salmon.png")
-    random_swarm = Swarm(random_swarm_data)
+    random_swarm_1 = Swarm(Swarm:generate(unpack(swarm_points[1])))
+    random_swarm_2 = Swarm(Swarm:generate(unpack(swarm_points[2])))
+
     wall = Wall(200, 200, 30, 100, 0, 100)
 end
 
@@ -55,7 +59,9 @@ function love.update(dt)
     player:move() -- if the method has "self" as a parameter, must use colon
     camera:lockPosition(player.body:getX(), player.body:getY())
     swarm:move(dt)
-    random_swarm:move(dt)
+    random_swarm_1:move(dt)
+    random_swarm_2:move(dt)
+
 end
 
 function love.draw()
@@ -70,7 +76,9 @@ function love.draw()
     player:draw()
     wall:draw()
     swarm:draw()
-    random_swarm:draw()
+    random_swarm_1:draw()
+    random_swarm_2:draw()
+
 
     love.graphics.print(debug_text, 0, 0, 0, 2, 2)
 
@@ -78,19 +86,29 @@ function love.draw()
 end
 
 
+
+-- Investigating collision callbacks
+
 function is_damaging(id_a, id_b)
     return (id_a:find("^Player") ~= nil and id_b:find("^SwarmEnemy") ~= nil) or
            (id_b:find("^Player") ~= nil and id_a:find("^SwarmEnemy") ~= nil)
 end
 
+-- function is_detecting(id_a, id_b)
+--     return (id_a:find("^Player") ~= nil and id_b:find("^Detection") ~= nil) or
+--            (id_b:find("^Player") ~= nil and id_a:find("^Detection") ~= nil)
+-- end
+
 function begin_contact(a, b, coll)
     local id_a = a:getUserData()
 	local id_b = b:getUserData()
+
     debug_text = debug_text..id_a.." colliding with "..id_b.."\n"
     if is_damaging(id_a, id_b) then
         player:take_damage()
         debug_text = debug_text.."Damage interaction\n"
     end
+
 
     if player.health <= 0 then
         debug_text = debug_text.."player dead\n"

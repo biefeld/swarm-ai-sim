@@ -45,13 +45,13 @@ end
 
 -- Generates a Swarm of number Enemy entities
 -- Random rgb values, random location within circle of origin and radius
-function Swarm:generate(number, origin, radius, mass, speed, sprite_name)
+function Swarm:generate(swarm_number,enemy_number, origin, radius, mass, speed, sprite_name)
     data = {}
-    for i = 1, number, 1 do
+    for i = 1, enemy_number, 1 do
         x = (math.random(radius) * (math.random(0,1) * 2 - 1))
         y = (math.random(math.floor(math.sqrt(radius^2 - x^2))) * (math.random(0,1) * 2 - 1))
         rgb = {math.random(255)/255, math.random(255)/255, math.random(255)/255}
-        name = "SwarmEnemy"..i.."RandomGen"
+        name = "SwarmEnemy"..i.."SwarmID"..swarm_number
         entry = {x+origin[1],y+origin[2],mass,speed,name,rgb,sprite_name}
         table.insert(data, entry)
     end

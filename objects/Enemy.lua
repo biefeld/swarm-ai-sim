@@ -32,6 +32,13 @@ function Enemy:init(_x, _y, _mass, _speed, _name, _rgb, _sprite_name)
     self.fixture:setCategory(Category.ENEMY) -- Part of ENEMY category
     self.fixture:setMask(Category.ENEMY) -- Cannot collide with ENEMY entities
 
+    -- self.detection_shape = love.physics.newCircleShape(self.sprite:getWidth())
+    -- self.detection_fixture = love.physics.newFixture(self.body, self.detection_shape)
+    -- self.detection_fixture:setUserData("Detection".._name)
+    -- self.detection_fixture:setCategory(Category.DETECTION)
+    -- self.detection_fixture:setMask(Category.ENEMY, Category.DETECTION)
+
+
     self.body:setMass(_mass)
 end
 
@@ -49,8 +56,12 @@ function Enemy:draw()
         1 --y scaling
     )
 
-    -- debug hitbox
-    -- love.graphics.polygon("line", self.body:getWorldPoints(self.shape:getPoints()))
+    -- love.graphics.setColor(0.2,0.5,0.1)
+    -- love.graphics.circle("line", self.body:getX(),self.body:getY(), self.detection_shape:getRadius()) -- if we want to have a sprite, dont draw this. draw the sprite instead, should be linked to the coordinates of the body too.
+
+
+    -- -- debug hitbox
+    love.graphics.polygon("line", self.body:getWorldPoints(self.shape:getPoints()))
 end
 
 
