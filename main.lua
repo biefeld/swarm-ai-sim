@@ -16,6 +16,8 @@ camera = nil
 math.randomseed(os.time())
 
 swarm_points = json.decode(io.open("db/swarm_points.json", "r"):read("*all"))
+wall_points = json.decode(io.open("db/wall.json", "r"):read("*all"))
+
 
 function love.keypressed(key, scancode, isrepeat)
    if key == "r" then
@@ -39,16 +41,25 @@ function love.load()
 
     player = Player()
     background = Background()
-    swarm = Swarm({
+
+    swarm = {
+        swarm_1 = Swarm({
         {400, 700, 50, 200, "SwarmEnemySalmon1", {1,0.5,0.5}, "salmon.png"},
         {400, 700, 50, 200, "SwarmEnemySalmon2", {0.5,1,0.5}, "salmon.png"},
         {400, 700, 50, 200, "SwarmEnemySalmon3", {0.5,0.5,1}, "salmon.png"}
-    })
+        }),
+        swarm_2 = Swarm(Swarm:generate(unpack(swarm_points[1]))),
+        swarm_3 = Swarm(Swarm:generate(unpack(swarm_points[2])))
+    }
 
-    random_swarm_1 = Swarm(Swarm:generate(unpack(swarm_points[1])))
-    random_swarm_2 = Swarm(Swarm:generate(unpack(swarm_points[2])))
 
-    wall = Wall(200, 200, 30, 100, 0, 100)
+    wall = {
+        left = Wall(unpack(wall_points[1])),
+        right = Wall(unpack(wall_points[2])),
+        top = Wall(unpack(wall_points[3])),
+        bottom = Wall(unpack(wall_points[4]))
+    }
+
 end
 
 function love.update(dt)
@@ -58,9 +69,14 @@ function love.update(dt)
 
     player:move() -- if the method has "self" as a parameter, must use colon
     camera:lockPosition(player.body:getX(), player.body:getY())
-    swarm:move(dt)
-    random_swarm_1:move(dt)
-    random_swarm_2:move(dt)
+    
+    for _, s in pairs(swarm) do
+        s:move(dt)
+    end
+
+    -- swarm:move(dt)
+    -- random_swarm_1:move(dt)
+    -- random_swarm_2:move(dt)
 
 end
 
@@ -68,21 +84,21 @@ function love.draw()
     camera:attach()
 
     background:draw()
-
-    -- Maybe think about adding entities to thier own namespace and
-    -- Then only having to call one draw() function
-    -- then do Entities:draw() iterate over each draw function like swarms end
-    -- Maybe same with move()
     player:draw()
-    wall:draw()
-    swarm:draw()
-    random_swarm_1:draw()
-    random_swarm_2:draw()
+    
+    for _, v in pairs(wall) do
+        v:draw()
+    end
 
-
-    love.graphics.print(debug_text, 0, 0, 0, 2, 2)
+      for _, s in pairs(swarm) do
+        s:draw(dt)
+    end
 
     camera:detach()
+
+    -- stationary on screen: good for UI elements
+    love.graphics.print(debug_text, 0, 0, 0, 2, 2)
+
 end
 
 
