@@ -7,26 +7,20 @@ Enemy = Class("Enemy")
 ---@param _y number
 ---@param _angle number
 ---@param _mass number
----@param _velocity number
----@param _cycle_time number
+---@param _speed number
 ---@param _name string
 ---@param _rgb {number, number, number}
 ---@param _sprite_name string
-function Enemy:init(_x, _y, _angle, _mass, _velocity, _cycle_time, _name, _rgb, _sprite_name)
+function Enemy:init(_x, _y, _angle, _mass, _speed, _name, _rgb, _sprite_name)
     -- Drawing fields
     self.sprite = love.graphics.newImage("assets/".._sprite_name)
-    self.sprite_direction = 1
     self.rgb = _rgb
 
     -- Movement fields
-    self.velocity = _velocity
-    self.moving = {
-        {1, 0},
-        {-1, 0}
-    }
-    self.cycle_time = _cycle_time
-    self.timer = 0
-    self.cycle = 1
+    self.speed = _speed
+    self.moving = {1,1}
+    self.cycle_time = 0.0
+    self.timer = 0.0
     
     -- Physics fields 
     self.body = love.physics.newBody(world, _x , _y, "dynamic")
@@ -46,12 +40,13 @@ function Enemy:draw()
     love.graphics.setColor(unpack(self.rgb))
     x_offset,y_offset = self.shape:getPoints()
    
+    -- doesn't fit perfectly into hitbox at the moment
     love.graphics.draw(
         self.sprite,
-        self.body:getX() + x_offset*self.sprite_direction, -- x coord
+        self.body:getX() + x_offset*self.moving[1], -- x coord
         self.body:getY() + y_offset, -- y coord
-        0, -- angle
-        1*self.sprite_direction, --x scaling
+        self.body:getAngle(), -- angle
+        self.moving[1], --x scaling
         1 --y scaling
     )
 
@@ -61,23 +56,38 @@ end
 
 
 function Enemy:move(dt)
-    self.dx, self.dy = 0, 0
+    --[[
+    Easy random movement
+    1. After last cycle has finished: Choose a random point in space
+    2. Choose a random curved-path to take - parameterised by sin/cos or smth
+    3. Move (takes random time to do so based on above - calc before and set to cycle_time)
+    ]]--
 
     if self.timer >= self.cycle_time then
-        self.cycle = self.cycle % #self.moving + 1
-        self.timer = 0
+        self.timer = 0.0
+
+        self.dx, self.dy =  math.random(200,800),  math.random(0,100)
+        self.moving = {math.random(0,1) * 2 - 1, math.random(0,1) * 2 - 1}
+        r = math.sqrt(self.dx^2 + self.dy^2)
+
+        time = r / self.speed
+        self.cycle_time = time
+
+        self.vx = self.dx/time*self.moving[1]
+        self.vy = self.dy/time*self.moving[2]
+
+        angle = math.atan2(self.vy, self.vx)
+        if math.abs(angle) > math.pi/2 then
+            angle = -math.pi + angle
+        end
+
+        self.body:setAngle(angle)
+
+        -- print(self.dx, self.dy, self.body:getX(), self.body:getY(), r, time)
+        -- print(self.vx, self.vy)
     end
 
-    self.dx = self.dx + self.velocity*self.moving[self.cycle][1]
-    self.dy = self.dy + self.velocity*self.moving[self.cycle][2]
-
-    if self.dx > 0 then
-        self.sprite_direction = 1
-    elseif self.dx < 0 then
-        self.sprite_direction = -1
-    end
-
-    self.body:setLinearVelocity(self.dx, self.dy)
+    self.body:setLinearVelocity(self.vx, self.vy)
 
     self.timer = self.timer + dt
 end

@@ -12,6 +12,7 @@ local Input = require "enum.input"
 -- Required objects
 world = nil
 camera = nil
+math.randomseed(os.time())
 
 function love.keypressed(key, scancode, isrepeat)
    if key == "r" then
@@ -36,9 +37,9 @@ function love.load()
     player = Player()
     background = Background()
     swarm = Swarm({
-        {400, 700, 0, 50, 300, 2, "SwarmEnemy1", {1,0.5,0.5}, "salmon.png"},
-        {600, 700, 0, 50, 100, 1, "SwarmEnemy2", {0.5,1,0.5}, "salmon.png"},
-        {300, 700, 0, 50, 400, 2.5, "SwarmEnemy3", {0.5,0.5,1}, "salmon.png"}
+        {400, 700, 0, 50, 200, "SwarmEnemy1", {1,0.5,0.5}, "salmon.png"},
+        {400, 700, 0, 50, 200, "SwarmEnemy2", {0.5,1,0.5}, "salmon.png"},
+        {400, 700, 0, 50, 200, "SwarmEnemy3", {0.5,0.5,1}, "salmon.png"}
     })
     wall = Wall(200, 200, 30, 100, 0, 100)
 end

@@ -6,8 +6,7 @@ local Class = require "lib.30log"
 ---@param _y number
 ---@param _angle number
 ---@param _mass number
----@param _velocity number
----@param _cycle_time number
+---@param _speed number
 ---@param _name string
 ---@param _rgb {number, number, number}
 ---@param _sprite_name string
