@@ -5,13 +5,12 @@ Enemy = Class("Enemy")
 --- Initialize enemy entity
 ---@param _x number
 ---@param _y number
----@param _angle number
 ---@param _mass number
 ---@param _speed number
 ---@param _name string
 ---@param _rgb {number, number, number}
 ---@param _sprite_name string
-function Enemy:init(_x, _y, _angle, _mass, _speed, _name, _rgb, _sprite_name)
+function Enemy:init(_x, _y, _mass, _speed, _name, _rgb, _sprite_name)
     -- Drawing fields
     self.sprite = love.graphics.newImage("assets/".._sprite_name)
     self.rgb = _rgb
@@ -26,7 +25,7 @@ function Enemy:init(_x, _y, _angle, _mass, _speed, _name, _rgb, _sprite_name)
     self.body = love.physics.newBody(world, _x , _y, "dynamic")
     self.body:setFixedRotation(true) --body cannot rotate?
 
-    self.shape = love.physics.newRectangleShape(0, 0, self.sprite:getWidth(), self.sprite:getHeight(), _angle)
+    self.shape = love.physics.newRectangleShape(0, 0, self.sprite:getWidth(), self.sprite:getHeight(), 0)
     
     self.fixture = love.physics.newFixture(self.body, self.shape)
     self.fixture:setUserData(_name)

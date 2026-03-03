@@ -37,10 +37,13 @@ function love.load()
     player = Player()
     background = Background()
     swarm = Swarm({
-        {400, 700, 0, 50, 200, "SwarmEnemy1", {1,0.5,0.5}, "salmon.png"},
-        {400, 700, 0, 50, 200, "SwarmEnemy2", {0.5,1,0.5}, "salmon.png"},
-        {400, 700, 0, 50, 200, "SwarmEnemy3", {0.5,0.5,1}, "salmon.png"}
+        {400, 700, 50, 200, "SwarmEnemySalmon1", {1,0.5,0.5}, "salmon.png"},
+        {400, 700, 50, 200, "SwarmEnemySalmon2", {0.5,1,0.5}, "salmon.png"},
+        {400, 700, 50, 200, "SwarmEnemySalmon3", {0.5,0.5,1}, "salmon.png"}
     })
+
+    random_swarm_data = Swarm:generate(4, {500,500}, 50, 50, 100, "salmon.png")
+    random_swarm = Swarm(random_swarm_data)
     wall = Wall(200, 200, 30, 100, 0, 100)
 end
 
@@ -52,6 +55,7 @@ function love.update(dt)
     player:move() -- if the method has "self" as a parameter, must use colon
     camera:lockPosition(player.body:getX(), player.body:getY())
     swarm:move(dt)
+    random_swarm:move(dt)
 end
 
 function love.draw()
@@ -66,6 +70,7 @@ function love.draw()
     player:draw()
     wall:draw()
     swarm:draw()
+    random_swarm:draw()
 
     love.graphics.print(debug_text, 0, 0, 0, 2, 2)
 
