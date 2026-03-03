@@ -3,7 +3,7 @@ local Background = require "objects.Background"
 local Enemy = require "objects.Enemy"
 local Swarm = require "objects.Swarm"
 local Wall = require "objects.Wall"
-local PlayerHealth = require "objects.gui.PlayerHealth"
+local PlayerHealthBar = require "objects.gui.PlayerHealthBar"
 
 local Camera = require "lib.camera"
 local json = require "lib.json"
@@ -46,10 +46,10 @@ function love.load()
     camera = Camera()
     background = Background()
     gui = {
-        player_health = PlayerHealth()
+        player_health_bar = PlayerHealthBar()
     }
 
-    player = Player(gui.player_health)
+    player = Player(gui.player_health_bar)
 
     swarm = {
         swarm_1 = Swarm({
@@ -89,8 +89,8 @@ function love.draw()
     background:draw()
     player:draw()
     
-    for _, v in pairs(wall) do
-        v:draw()
+    for _, w in pairs(wall) do
+        w:draw()
     end
 
       for _, s in pairs(swarm) do
@@ -103,8 +103,8 @@ function love.draw()
     love.graphics.setColor(0,0.5,1)
     love.graphics.print(game.debug_text, 0, 0, 0, 2, 2)
     
-    for _,v in pairs(gui) do
-        v:draw()
+    for _, g in pairs(gui) do
+        g:draw()
     end
 end
 
