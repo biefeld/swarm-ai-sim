@@ -4,9 +4,11 @@ Player = Class("Player")
 
 local MASS = 100
 
-function Player:init()
+function Player:init(_life_indicator)
     -- Misc fields
     self.health = 100.0
+    self.life_indicator = _life_indicator
+    self.life_indicator:update_health(self.health)
     
     -- Drawing fields
     self.sprite = love.graphics.newImage("assets/player.png")
@@ -77,6 +79,7 @@ end
 
 function Player:take_damage()
     self.health = self.health - 10
+    self.life_indicator:update_health(self.health)
 end
 
 return Player

@@ -3,6 +3,7 @@ local Background = require "objects.Background"
 local Enemy = require "objects.Enemy"
 local Swarm = require "objects.Swarm"
 local Wall = require "objects.Wall"
+local PlayerHealth = require "objects.gui.PlayerHealth"
 
 local Camera = require "lib.camera"
 local json = require "lib.json"
@@ -27,20 +28,28 @@ function love.keypressed(key, scancode, isrepeat)
         love.event.quit() 
     end
     if key == "p" then
-        paused = not paused
+        game.paused = not game.paused
     end
 end
 
 function love.load()
     world = love.physics.newWorld(0, 0, true)
     world:setCallbacks(begin_contact, end_contact, _, _)
-    paused = false
-    debug_text = ""
+
+    game = {
+        paused = false,
+        alive = true,
+        debug_text = ""
+    }
+
 
     camera = Camera()
-
-    player = Player()
     background = Background()
+    gui = {
+        player_health = PlayerHealth()
+    }
+
+    player = Player(gui.player_health)
 
     swarm = {
         swarm_1 = Swarm({
@@ -52,7 +61,6 @@ function love.load()
         swarm_3 = Swarm(Swarm:generate(unpack(swarm_points[2])))
     }
 
-
     wall = {
         left = Wall(unpack(wall_points[1])),
         right = Wall(unpack(wall_points[2])),
@@ -63,7 +71,7 @@ function love.load()
 end
 
 function love.update(dt)
-    if paused then return end
+    if game.paused or not game.alive then return end
 
     world:update(dt)
 
@@ -73,11 +81,6 @@ function love.update(dt)
     for _, s in pairs(swarm) do
         s:move(dt)
     end
-
-    -- swarm:move(dt)
-    -- random_swarm_1:move(dt)
-    -- random_swarm_2:move(dt)
-
 end
 
 function love.draw()
@@ -97,8 +100,12 @@ function love.draw()
     camera:detach()
 
     -- stationary on screen: good for UI elements
-    love.graphics.print(debug_text, 0, 0, 0, 2, 2)
-
+    love.graphics.setColor(0,0.5,1)
+    love.graphics.print(game.debug_text, 0, 0, 0, 2, 2)
+    
+    for _,v in pairs(gui) do
+        v:draw()
+    end
 end
 
 
@@ -119,21 +126,22 @@ function begin_contact(a, b, coll)
     local id_a = a:getUserData()
 	local id_b = b:getUserData()
 
-    debug_text = debug_text..id_a.." colliding with "..id_b.."\n"
+   game.debug_text = game.debug_text..id_a.." colliding with "..id_b.."\n"
     if is_damaging(id_a, id_b) then
         player:take_damage()
-        debug_text = debug_text.."Damage interaction\n"
+        game.debug_text = game.debug_text.."Damage interaction\n"
     end
 
 
     if player.health <= 0 then
-        debug_text = debug_text.."player dead\n"
-        paused = true
+        game.debug_text = game.debug_text.."player dead\n"
+        game.paused = true
+        game.alive = false
     end
 end
 
 function end_contact(a, b, coll)
 	local id_a = a:getUserData()
 	local id_b = b:getUserData()
-    debug_text = debug_text..id_a.." uncolliding with "..id_b.."\n"
+    game.debug_text = game.debug_text..id_a.." uncolliding with "..id_b.."\n"
 end
