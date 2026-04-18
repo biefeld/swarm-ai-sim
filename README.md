@@ -8,11 +8,7 @@ The **LÖVE Framework** was employed as a 2D game engine for rendering, input ha
 
 1. Ensure you have [LÖVE](https://love2d.org/) installed on your system.
 2. Configure debug settings in [config.json](db/config.json)
-3. Navigate to the project directory and run the game:
-   ```bash
-   love .
-   ```
-
+3. Navigate to the project directory and run the game using `love .`
 
 ## Usage
 
