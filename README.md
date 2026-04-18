@@ -1,4 +1,4 @@
-# Lua Game Experiment: Swarm AI Simulation
+# Swarm-Based AI Simulation Prototype
 
 A simple 2D game prototype built in Lua, simulating swarm-based AI for enemy entities. Inspired by the dynamic fish AI in [*Dave the Diver*](https://store.steampowered.com/app/1868140/DAVE_THE_DIVER/), where schools of fish move realistically and react to environmental stimuli, I wanted to recreate similar patterns using Lua's lightweight scripting capabilities. 
 
