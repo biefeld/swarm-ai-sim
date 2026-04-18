@@ -18,6 +18,8 @@ math.randomseed(os.time())
 
 swarm_points = json.decode(io.open("db/swarm_points.json", "r"):read("*all"))
 wall_points = json.decode(io.open("db/wall.json", "r"):read("*all"))
+debug_on = json.decode(io.open("db/config.json", "r"):read("*all")).DEBUG
+
 
 
 function love.keypressed(key, scancode, isrepeat)
@@ -49,6 +51,7 @@ function love.load()
         player_health_bar = PlayerHealthBar()
     }
 
+    -- Pass gui into Player. Player owns the gui elements...
     player = Player(gui.player_health_bar)
 
     swarm = {
@@ -126,15 +129,24 @@ function begin_contact(a, b, coll)
     local id_a = a:getUserData()
 	local id_b = b:getUserData()
 
-   game.debug_text = game.debug_text..id_a.." colliding with "..id_b.."\n"
+    if debug_on then
+        game.debug_text = game.debug_text..id_a.." colliding with "..id_b.."\n"
+    end
+
     if is_damaging(id_a, id_b) then
         player:take_damage()
-        game.debug_text = game.debug_text.."Damage interaction\n"
+
+        if debug_on then
+            game.debug_text = game.debug_text.."Damage interaction\n"
+        end
     end
 
 
     if player.health <= 0 then
-        game.debug_text = game.debug_text.."player dead\n"
+        if debug_on then
+            game.debug_text = game.debug_text.."Player health: "..player.health.."\n"
+        end
+
         game.paused = true
         game.alive = false
     end
@@ -143,5 +155,8 @@ end
 function end_contact(a, b, coll)
 	local id_a = a:getUserData()
 	local id_b = b:getUserData()
-    game.debug_text = game.debug_text..id_a.." uncolliding with "..id_b.."\n"
+
+    if debug_on then
+        game.debug_text = game.debug_text..id_a.." uncolliding with "..id_b.."\n"
+    end
 end

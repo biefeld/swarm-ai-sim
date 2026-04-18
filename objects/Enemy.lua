@@ -59,9 +59,11 @@ function Enemy:draw()
     -- love.graphics.setColor(0.2,0.5,0.1)
     -- love.graphics.circle("line", self.body:getX(),self.body:getY(), self.detection_shape:getRadius()) -- if we want to have a sprite, dont draw this. draw the sprite instead, should be linked to the coordinates of the body too.
 
-
+    
     -- -- debug hitbox
-    love.graphics.polygon("line", self.body:getWorldPoints(self.shape:getPoints()))
+    if debug_on then
+        love.graphics.polygon("line", self.body:getWorldPoints(self.shape:getPoints()))
+    end
 end
 
 
