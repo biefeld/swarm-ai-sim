@@ -19,11 +19,10 @@ The **LÖVE Framework** was employed as a 2D game engine for rendering, input ha
 - Use arrow keys or WASD to move the player.
 - Avoid enemy swarms to survive.
 
-## Learnings and Reflections
+## Key Learnings and Reflections
 
 This project was an excellent opportunity to dive deep into Lua's unique features and apply them to game development and AI programming. Here are some key learnings:
 
-### Key Learnings and Challenges
 - **Lua and Code Structure**: Leveraged Lua's tables as versatile data structures for arrays, dictionaries, objects, and classes to create flexible game entities; adopted the 30log library for object-oriented programming, enabling clean inheritance and modular design; and organized the codebase into separate files (e.g., `objects/`, `lib/`) to improve maintainability and experimentation.
 - **Physics Implementation**: Experimented with multiple approaches for player and fish movement physics, including velocity-based systems, force accumulators, and kinematic equations, as well as various camera control methods like fixed, follow, and smooth interpolation. Ultimately settled on a simple velocity-based system with linear interpolation for camera tracking to balance performance and realism.
 - **Random AI Movement**: Implemented random movement patterns inspired by *Dave the Diver*, where fish select random target points and angles, then tween smoothly using mathematical interpolation (e.g., linear and easing functions). This created natural, unpredictable behavior without complex pathfinding.
